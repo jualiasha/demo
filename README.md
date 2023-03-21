@@ -1,8 +1,6 @@
-<p align="center">
-  <img width="200" src="https://open-wc.org/hero.png"></img>
-</p>
+# Demoing skills just to have it
 
-## Open-wc Starter App
+## Open-wc App with webcomponents
 
 [![Built with open-wc recommendations](https://img.shields.io/badge/built%20with-open--wc-blue.svg)](https://github.com/open-wc)
 
@@ -11,8 +9,12 @@
 To get started:
 
 ```bash
-npm init @open-wc
+npm i
 # requires node 10 & npm 6 or higher
+```
+
+```bash
+npm run storybook
 ```
 
 ## Scripts
@@ -24,8 +26,17 @@ npm init @open-wc
 - `lint` runs the linter for your project
 - `format` fixes linting and formatting errors
 
-## Tooling configs
+## Testing with Web Test Runner
 
-For most of the tools, the configuration is in the `package.json` to reduce the amount of files in your project.
+```bash
+npm run test
+```
 
-If you customize the configuration a lot, you can consider moving them to individual files.
+## Build a production version of Storybook
+
+```bash
+npm run storybook:build
+```
+
+
+
