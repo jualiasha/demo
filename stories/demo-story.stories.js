@@ -14,7 +14,7 @@ function Template({ header, backgroundColor }) {
     <div
       style="--demo-story-background-color: ${backgroundColor || 'white'}"
     >
-      Hello World
+      Hello
     </div>
   `;
 }
