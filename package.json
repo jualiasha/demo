@@ -22,7 +22,8 @@
     "@shoelace-style/shoelace": "^2.0.0",
     "date-fns": "^2.29.3",
     "highcharts": "^10.3.3",
-    "lit": "^2.6.1"
+    "lit": "^2.6.1",
+    "wretch": "^2.5.1"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.16.4",
