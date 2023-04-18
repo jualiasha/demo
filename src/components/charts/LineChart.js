@@ -3,8 +3,9 @@ import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js';
 import 'highcharts/es-modules/masters/modules/pattern-fill.src.js';
 import 'highcharts/es-modules/masters/modules/accessibility.src.js';
 //import { fetchChartData } from '../services/chartService';
-import response from '../services/fetchedData.json' assert { type: 'json' };
-
+import response from '../../services/fetchedData.json' assert { type: 'json' };
+import { FC_API_KEY } from 'process.env';
+console.log(FC_API_KEY);
 const lineChartColors = {
   selectedArea: 'rgba(51,92,173,0.25)',
   selectedTime: '#212121',

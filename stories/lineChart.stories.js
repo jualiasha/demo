@@ -1,5 +1,5 @@
 import { html } from 'lit';
-import '../src/charts/LineChart.js';
+import '../src/components/charts/LineChart.js';
 
 export default {
   title: 'Line Chart',
