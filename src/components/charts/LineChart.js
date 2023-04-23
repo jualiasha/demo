@@ -2,10 +2,9 @@ import { html, LitElement, css } from 'lit';
 import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js';
 import 'highcharts/es-modules/masters/modules/pattern-fill.src.js';
 import 'highcharts/es-modules/masters/modules/accessibility.src.js';
-//import { fetchChartData } from '../services/chartService';
+// import { fetchChartData } from '../../services/chartService';
 import response from '../../services/fetchedData.json' assert { type: 'json' };
-import { FC_API_KEY } from 'process.env';
-console.log(FC_API_KEY);
+
 const lineChartColors = {
   selectedArea: 'rgba(51,92,173,0.25)',
   selectedTime: '#212121',
@@ -17,6 +16,7 @@ export class LineChart extends LitElement {
     selectedArea: { type: Array },
     trendData: { type: Array },
   };
+
   constructor() {
     super();
     this._chart = null;
@@ -25,6 +25,8 @@ export class LineChart extends LitElement {
     this.minY = null;
     this.trendData = null;
   }
+
+  /* eslint class-methods-use-this: "off" */
 
   async connectedCallback() {
     super.connectedCallback();
@@ -36,19 +38,16 @@ export class LineChart extends LitElement {
   }
 
   async _getTrendData() {
-    //let response = null;
-    // API v2 was really unstable -> notify the user
-    /*try {
+    /* let response = null;
+    try {
       response = await fetchChartData();
     } catch (error) {
       console.log('fetchDataError:', error);
-    }*/
-    return Object.values(response.response).map(res => {
-      return {
-        x: res.t,
-        y: Number(res.c),
-      };
-    });
+    } */
+    return Object.values(response.response).map(res => ({
+      x: res.t,
+      y: Number(res.c),
+    }));
   }
 
   willUpdate(_changedProperties) {
@@ -77,13 +76,14 @@ export class LineChart extends LitElement {
     const range30min = 60000 * 30;
     const self = this;
     const figure = this.renderRoot.querySelector('figure');
+    // eslint-disable-next-line new-cap
     this._chart = new Highcharts.chart(figure, {
       chart: {
         height: 350,
         backgroundColor: 'transparent',
         events: {
           click: e => this.graphClickEvent(e),
-          selection: function (event) {
+          selection(event) {
             event.preventDefault();
             self.selectedArea = {
               from: event.xAxis[0].min,
@@ -140,9 +140,9 @@ export class LineChart extends LitElement {
         endOnTick: false,
         startOnTick: false,
         tickPosition: 'inside',
-        /*tickInterval: this.getTickInterval(),
+        /* tickInterval: this.getTickInterval(),
         min: this.minY - this.getTickInterval(),
-        max: this.maxY + this.getTickInterval(),*/
+        max: this.maxY + this.getTickInterval(), */
       },
 
       tooltip: {
@@ -195,9 +195,8 @@ export class LineChart extends LitElement {
   getTickInterval() {
     if ((this.maxY - this.minY) / 7 >= 1) {
       return Math.round((this.maxY - this.minY) / 7);
-    } else {
-      return Math.round((1000 * (this.maxY - this.minY)) / 5) / 1000;
     }
+    return Math.round((1000 * (this.maxY - this.minY)) / 5) / 1000;
   }
 
   graphClickEvent(e) {
@@ -216,6 +215,7 @@ export class LineChart extends LitElement {
     };
     this.dispatchEvent(new CustomEvent('line-chart-click', options));
   }
+
   pointClickEvent(e) {
     if (this.selectedArea) {
       this.hideSelectedArea();

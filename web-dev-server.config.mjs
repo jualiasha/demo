@@ -26,8 +26,9 @@ export default /** @type {import('@web/dev-server').DevServerConfig} */ ({
     // hmr && hmrPlugin({ exclude: ['**/*/node_modules/**/*'], presets: [presets.litElement] }),
     replace({
       // setting "include" is important for performance
-      include: ['src/charts/LineChart'],
-      'process.env.NODE_ENV': '"development"',
+      include: ['src/services/chartService.js'],
+      'process.env.FC_API_KEY': '"fU8WVLH7jLjzdpNGZwxRzQRYK"',
+      preventAssignment: true,
     }),
   ],
 

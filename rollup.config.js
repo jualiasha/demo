@@ -4,7 +4,6 @@ import html from '@web/rollup-plugin-html';
 import { importMetaAssets } from '@web/rollup-plugin-import-meta-assets';
 import esbuild from 'rollup-plugin-esbuild';
 import { generateSW } from 'rollup-plugin-workbox';
-import bakedEnv from 'rollup-plugin-baked-env';
 import path from 'path';
 
 export default {
@@ -25,8 +24,6 @@ export default {
       injectServiceWorker: true,
       serviceWorkerPath: 'dist/sw.js',
     }),
-    /*process.env vars*/
-    bakedEnv(),
     /** Resolve bare module imports */
     nodeResolve(),
     /** Minify JS, compile JS to a lower language target */
