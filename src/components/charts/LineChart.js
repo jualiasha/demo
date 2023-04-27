@@ -1,5 +1,5 @@
 import { html, LitElement, css } from 'lit';
-import Highcharts from 'highcharts/es-modules/masters/highcharts.src.js';
+import Highcharts from 'highcharts/es-modules/masters/highstock.src.js';
 import 'highcharts/es-modules/masters/modules/pattern-fill.src.js';
 import 'highcharts/es-modules/masters/modules/accessibility.src.js';
 // import { fetchChartData } from '../../services/chartService';
@@ -24,23 +24,24 @@ export class LineChart extends LitElement {
     this.maxY = null;
     this.minY = null;
     this.trendData = null;
+    this.fetchId = 1;
   }
 
   /* eslint class-methods-use-this: "off" */
 
   async connectedCallback() {
     super.connectedCallback();
-    this.trendData = await this._getTrendData();
+    this.trendData = await this._fetchTrendData();
     const y = this.trendData.map(trend => trend.y);
     this.minY = Math.min(...y);
     this.maxY = Math.max(...y);
     console.log(this.trendData);
   }
 
-  async _getTrendData() {
+  async _fetchTrendData() {
     /* let response = null;
     try {
-      response = await fetchChartData();
+      response = await fetchChartData(this.fetchId);
     } catch (error) {
       console.log('fetchDataError:', error);
     } */
@@ -77,7 +78,7 @@ export class LineChart extends LitElement {
     const self = this;
     const figure = this.renderRoot.querySelector('figure');
     // eslint-disable-next-line new-cap
-    this._chart = new Highcharts.chart(figure, {
+    this._chart = new Highcharts.stockChart(figure, {
       chart: {
         height: 350,
         backgroundColor: 'transparent',
@@ -94,7 +95,7 @@ export class LineChart extends LitElement {
           },
         },
         zoomType: 'x',
-        margin: [0, 0, 0, 0],
+        margin: [0, 50, 50, 0],
         animation: false,
       },
       credits: {
@@ -108,17 +109,17 @@ export class LineChart extends LitElement {
       },
 
       xAxis: {
+        crosshair: {
+          snap: false,
+        },
         type: 'datetime',
         title: {
           text: null,
         },
-        lineWidth: 1,
-        tickWidth: 1,
-        labels: {
-          enabled: true,
-        },
+        lineColor: '#000',
         maxPadding: 0.002,
         minRange: range30min,
+        tickInterval: range30min,
       },
 
       yAxis: {
@@ -127,19 +128,29 @@ export class LineChart extends LitElement {
         },
         crosshair: {
           snap: false,
+          label: {
+            enabled: true,
+            backgroundColor: '#cccccc',
+            padding: 3,
+            shape: 'square',
+            style: {
+              fontSize: '0.8rem',
+              color: '#000',
+            },
+          },
         },
         opposite: true,
         gridLineWidth: 0,
-        lineColor: 'grey',
+        lineColor: '#000',
         lineWidth: 1,
         tickWidth: 1,
-        labels: {
+        /* labels: {
           x: -8,
           align: 'right',
-        },
+        }, */
         endOnTick: false,
         startOnTick: false,
-        tickPosition: 'inside',
+        // tickPosition: 'inside',
         /* tickInterval: this.getTickInterval(),
         min: this.minY - this.getTickInterval(),
         max: this.maxY + this.getTickInterval(), */

@@ -1,9 +1,9 @@
 import wretch from 'wretch';
 
-export const fetchChartData = async () => {
+export const fetchChartData = async id => {
   const accessKey = process.env.FC_API_KEY;
   return wretch(
-    `https://fcsapi.com/api-v3/forex/history?id=1&period=4h&access_key=${accessKey}`
+    `https://fcsapi.com/api-v3/forex/history?id=${id}&period=4h&access_key=${accessKey}`
   )
     .headers({
       Accept: 'application/json',

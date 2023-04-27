@@ -9,15 +9,15 @@ export default {
   },
 };
 
-function Template({ header, backgroundColor }) {
+function Template() {
   return html`
-    <div style="--demo-story-background-color: ${backgroundColor || 'white'}">
-      <my-line-chart></my-line-chart>
+    <div style="--demo-story-background-color: 'white'">
+      <my-line-chart .fetchId=${1}></my-line-chart>
     </div>
   `;
 }
 
 export const App = Template.bind({});
 App.args = {
-  header: 'My app',
+  backgroundColor: '#fff',
 };
