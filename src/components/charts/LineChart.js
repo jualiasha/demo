@@ -8,7 +8,7 @@ import response from '../../services/fetchedData.json' assert { type: 'json' };
 const lineChartColors = {
   selectedArea: 'rgba(51,92,173,0.25)',
   selectedTime: '#212121',
-  trendLine: '#636463',
+  trendLine: '#6B7280',
 };
 
 export class LineChart extends LitElement {
@@ -107,7 +107,21 @@ export class LineChart extends LitElement {
       title: {
         text: null,
       },
-
+      navigator: {
+        enabled: false,
+      },
+      navigation: {
+        buttonOptions: {
+          enabled: false,
+        },
+      },
+      rangeSelector: {
+        enabled: false,
+        inputEnabled: false,
+      },
+      scrollbar: {
+        enabled: false,
+      },
       xAxis: {
         crosshair: {
           snap: false,
@@ -116,7 +130,6 @@ export class LineChart extends LitElement {
         title: {
           text: null,
         },
-        lineColor: '#000',
         maxPadding: 0.002,
         minRange: range30min,
         tickInterval: range30min,
@@ -137,23 +150,20 @@ export class LineChart extends LitElement {
               fontSize: '0.8rem',
               color: '#000',
             },
+            formatter(value) {
+              return Number(value.toFixed(4));
+            },
           },
         },
         opposite: true,
         gridLineWidth: 0,
-        lineColor: '#000',
         lineWidth: 1,
         tickWidth: 1,
-        /* labels: {
-          x: -8,
-          align: 'right',
-        }, */
+        labels: {
+          align: 'left',
+        },
         endOnTick: false,
         startOnTick: false,
-        // tickPosition: 'inside',
-        /* tickInterval: this.getTickInterval(),
-        min: this.minY - this.getTickInterval(),
-        max: this.maxY + this.getTickInterval(), */
       },
 
       tooltip: {
