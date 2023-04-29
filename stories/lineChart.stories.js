@@ -1,23 +1,99 @@
 import { html } from 'lit';
 import '../src/components/charts/LineChart.js';
 
+const getStyles = args =>
+  html`
+    <style>
+      #container {
+        height: 100vh;
+        background-color: ${args.darkMode
+          ? 'var(--sl-color-gray-800)'
+          : args.backgroundColor};
+      }
+      .events {
+        color: ${args.darkMode ? '#fff' : 'inherit'};
+      }
+      .default {
+        width: 100%;
+      }
+
+      li {
+        font-size: 1.5rem;
+      }
+    </style>
+  `;
+
+const onPointClick = (pointX, pointY) => {
+  const pointClick = document.querySelector('#pointClick');
+  if (pointX && pointY) {
+    pointClick.innerHTML = `x: ${pointX}, y:${pointY}`;
+  } else {
+    pointClick.innerHTML = '';
+  }
+};
+
+const onGraphClick = (pointX, pointY) => {
+  const graphClick = document.querySelector('#graphClick');
+  if (pointX && pointY) {
+    graphClick.innerHTML = `x: ${pointX}, y:${pointY}`;
+  } else {
+    graphClick.innerHTML = '';
+  }
+};
+const getLineChart = args =>
+  html` <my-line-chart
+    .fetchId=${args.fetchId}
+    .darkMode=${args.darkMode}
+    @graph-click=${e => onGraphClick(e.detail.pointX, e.detail.pointY)}
+    @point-click=${e => onPointClick(e.detail.pointX, e.detail.pointY)}
+  ></my-line-chart>`;
+
+const disabled = {
+  table: {
+    disable: true,
+  },
+};
+
 export default {
   title: 'Line Chart',
   component: 'my-line-chart',
   argTypes: {
     backgroundColor: { control: 'color' },
+    fetchId: { control: 'number', ...disabled },
+    darkMode: { control: 'boolean' },
+  },
+  parameters: {
+    backgrounds: {
+      values: [{ name: 'dark', value: 'var(--sl-color-gray-800)' }],
+    },
   },
 };
 
-function Template() {
+function Template(args) {
   return html`
-    <div style="--demo-story-background-color: 'white'">
-      <my-line-chart .fetchId=${1}></my-line-chart>
+    ${getStyles(args)}
+    <div id="container">
+      <div class="default">${getLineChart(args)}</div>
+      <div class="events">
+        <h2>Events:</h2>
+        <ul>
+          <li>graph-click: <span id="graphClick"></span></li>
+          <li>point-click: <span id="pointClick"></span></li>
+        </ul>
+      </div>
     </div>
   `;
 }
 
-export const App = Template.bind({});
-App.args = {
+export const Default = Template.bind({});
+Default.args = {
   backgroundColor: '#fff',
+  fetchId: 1,
+  darkMode: false,
+};
+
+export const DarkMode = Template.bind({});
+DarkMode.args = {
+  ...Default,
+  darkMode: true,
 };

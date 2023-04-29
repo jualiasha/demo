@@ -2,29 +2,35 @@ import { html, LitElement, css } from 'lit';
 import Highcharts from 'highcharts/es-modules/masters/highstock.src.js';
 import 'highcharts/es-modules/masters/modules/pattern-fill.src.js';
 import 'highcharts/es-modules/masters/modules/accessibility.src.js';
+import { format } from 'date-fns';
 // import { fetchChartData } from '../../services/chartService';
 import response from '../../services/fetchedData.json' assert { type: 'json' };
 
 const lineChartColors = {
   selectedArea: 'rgba(51,92,173,0.25)',
-  selectedTime: '#212121',
   trendLine: '#6B7280',
+  valuePlotLine: '#e51212',
+  selectedTime: '#e51212',
+  darkThemeBackgroundColor: '#313131',
+  darkModeTrendLine: '#fff',
 };
 
 export class LineChart extends LitElement {
   static properties = {
     selectedArea: { type: Array },
     trendData: { type: Array },
+    darkMode: { type: Boolean },
+    chartType: { type: String },
   };
 
   constructor() {
     super();
     this._chart = null;
     this.selectedArea = null;
-    this.maxY = null;
-    this.minY = null;
     this.trendData = null;
     this.fetchId = 1;
+    this.darkMode = false;
+    this.chartType = null;
   }
 
   /* eslint class-methods-use-this: "off" */
@@ -32,10 +38,6 @@ export class LineChart extends LitElement {
   async connectedCallback() {
     super.connectedCallback();
     this.trendData = await this._fetchTrendData();
-    const y = this.trendData.map(trend => trend.y);
-    this.minY = Math.min(...y);
-    this.maxY = Math.max(...y);
-    console.log(this.trendData);
   }
 
   async _fetchTrendData() {
@@ -53,8 +55,13 @@ export class LineChart extends LitElement {
 
   willUpdate(_changedProperties) {
     console.log(_changedProperties);
-    if (_changedProperties.has('trendData') && this.trendData) {
-      this.updateChartData();
+    if (this._chart) {
+      if (_changedProperties.has('trendData') && this.trendData) {
+        this.updateChartData();
+      }
+      if (_changedProperties.has('darkMode')) {
+        this.updateChartTheme();
+      }
     }
   }
 
@@ -64,6 +71,85 @@ export class LineChart extends LitElement {
 
   firstUpdated() {
     this.initChart();
+    this.updateChartTheme();
+  }
+
+  updateChartTheme() {
+    if (this.darkMode) {
+      this._chart.update({
+        chart: {
+          backgroundColor: lineChartColors.darkThemeBackgroundColor,
+        },
+        series: [
+          {
+            type: 'line',
+            id: 'trend',
+            color: lineChartColors.darkModeTrendLine,
+          },
+        ],
+      });
+    } else {
+      this._chart.update({
+        chart: {
+          backgroundColor: 'transparent',
+        },
+        series: [
+          {
+            type: 'line',
+            id: 'trend',
+            color: lineChartColors.trendLine,
+          },
+        ],
+      });
+    }
+  }
+
+  updateChartXAxis(selectedTime) {
+    const xUtc = this._getTimezoneTime(selectedTime, 'UTC');
+    this._chart.update({
+      xAxis: {
+        plotBands: this.selectedArea ? [this.selectedArea] : [],
+        plotLines: [
+          {
+            value: selectedTime,
+            color: lineChartColors.selectedTime,
+            width: 1,
+            zIndex: 3,
+            label: {
+              verticalAlign: 'bottom',
+              align: 'left',
+              rotation: 0,
+              text: `${format(xUtc, 'dd.MM HH:mm')}`,
+              style: {
+                color: lineChartColors.selectedTime,
+              },
+            },
+          },
+        ],
+      },
+    });
+  }
+
+  updateChartYAxis(value) {
+    this._chart.update({
+      yAxis: {
+        plotLines: [
+          {
+            value,
+            color: lineChartColors.valuePlotLine,
+            width: 1,
+            zIndex: 3,
+            label: {
+              text: `${value}`,
+              align: 'right',
+              style: {
+                color: lineChartColors.valuePlotLine,
+              },
+            },
+          },
+        ],
+      },
+    });
   }
 
   updateChartData() {
@@ -81,7 +167,6 @@ export class LineChart extends LitElement {
     this._chart = new Highcharts.stockChart(figure, {
       chart: {
         height: 350,
-        backgroundColor: 'transparent',
         events: {
           click: e => this.graphClickEvent(e),
           selection(event) {
@@ -151,7 +236,8 @@ export class LineChart extends LitElement {
               color: '#000',
             },
             formatter(value) {
-              return Number(value.toFixed(4));
+              const valueFixed = value.toFixed(4);
+              return `${Number(valueFixed)}`;
             },
           },
         },
@@ -197,7 +283,6 @@ export class LineChart extends LitElement {
           tooltip: {
             enabled: false,
           },
-          color: lineChartColors.trendLine,
           marker: {
             enabled: false,
           },
@@ -213,43 +298,46 @@ export class LineChart extends LitElement {
     this.selectedArea = null;
   }
 
-  getTickInterval() {
-    if ((this.maxY - this.minY) / 7 >= 1) {
-      return Math.round((this.maxY - this.minY) / 7);
-    }
-    return Math.round((1000 * (this.maxY - this.minY)) / 5) / 1000;
-  }
-
   graphClickEvent(e) {
     if (this.selectedArea) {
       this.hideSelectedArea();
     }
-    const pointX =
-      this.trendData.length ??
-      this.trendData.find(point => point.x >= e.xAxis[0].value).x;
+    const pointY = e.yAxis[0].value;
+    const pointX = e.xAxis[0].value;
     const options = {
       detail: {
         pointX,
+        pointY,
       },
       bubbles: true,
       composed: true,
     };
-    this.dispatchEvent(new CustomEvent('line-chart-click', options));
+    this.dispatchEvent(new CustomEvent('graph-click', options));
   }
 
   pointClickEvent(e) {
     if (this.selectedArea) {
       this.hideSelectedArea();
     }
+    const pointY = this.trendData.find(point => point.y >= e.point.y).y;
+    const pointX = this.trendData.find(point => point.x >= e.point.x).x;
     const options = {
       detail: {
-        pointX: e.point.x,
+        pointX,
+        pointY,
       },
       bubbles: true,
       composed: true,
     };
-    this.dispatchEvent(new CustomEvent('line-chart-click', options));
+    this.updateChartXAxis(pointX);
+    this.updateChartYAxis(pointY);
+    this.dispatchEvent(new CustomEvent('point-click', options));
   }
+
+  _getTimezoneTime = (date, timeZone) => {
+    const zonedDate = new Date(date).toLocaleString('en-US', { timeZone });
+    return new Date(Date.parse(zonedDate));
+  };
 
   static styles = css`
     figure {
