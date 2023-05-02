@@ -26,16 +26,16 @@ const getStyles = args =>
 const onPointClick = (pointX, pointY) => {
   const pointClick = document.querySelector('#pointClick');
   if (pointX && pointY) {
-    pointClick.innerHTML = `x: ${pointX}, y:${pointY}`;
+    pointClick.innerHTML = `open: ${pointX}, close:${pointY}`;
   } else {
     pointClick.innerHTML = '';
   }
 };
 
-const onGraphClick = (pointX, pointY) => {
+const onGraphClick = pointY => {
   const graphClick = document.querySelector('#graphClick');
-  if (pointX && pointY) {
-    graphClick.innerHTML = `x: ${pointX}, y:${pointY}`;
+  if (pointY) {
+    graphClick.innerHTML = `y:${pointY}`;
   } else {
     graphClick.innerHTML = '';
   }
@@ -44,7 +44,8 @@ const getLineChart = args =>
   html` <my-line-chart
     .fetchId=${args.fetchId}
     .darkMode=${args.darkMode}
-    @graph-click=${e => onGraphClick(e.detail.pointX, e.detail.pointY)}
+    .chartType=${args.chartType}
+    @graph-click=${e => onGraphClick(e.detail.pointY)}
     @point-click=${e => onPointClick(e.detail.pointX, e.detail.pointY)}
   ></my-line-chart>`;
 
@@ -55,10 +56,14 @@ const disabled = {
 };
 
 export default {
-  title: 'Line Chart',
+  title: 'Charts/Line Chart',
   component: 'my-line-chart',
   argTypes: {
     backgroundColor: { control: 'color' },
+    chartType: {
+      options: ['line', 'candle'],
+      control: { type: 'select' },
+    },
     fetchId: { control: 'number', ...disabled },
     darkMode: { control: 'boolean' },
   },
@@ -90,10 +95,22 @@ Default.args = {
   backgroundColor: '#fff',
   fetchId: 1,
   darkMode: false,
+  chartType: 'line',
 };
 
 export const DarkMode = Template.bind({});
 DarkMode.args = {
-  ...Default,
+  ...Default.args,
   darkMode: true,
+};
+DarkMode.parameters = {
+  backgrounds: {
+    default: 'dark',
+  },
+};
+
+export const CandleSticks = Template.bind({});
+CandleSticks.args = {
+  ...Default.args,
+  chartType: 'candle',
 };
