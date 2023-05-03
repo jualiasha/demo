@@ -98,6 +98,12 @@ Default.args = {
   chartType: 'line',
 };
 
+export const CandleSticks = Template.bind({});
+CandleSticks.args = {
+  ...Default.args,
+  chartType: 'candle',
+};
+
 export const DarkMode = Template.bind({});
 DarkMode.args = {
   ...Default.args,
@@ -107,10 +113,4 @@ DarkMode.parameters = {
   backgrounds: {
     default: 'dark',
   },
-};
-
-export const CandleSticks = Template.bind({});
-CandleSticks.args = {
-  ...Default.args,
-  chartType: 'candle',
 };

@@ -346,7 +346,7 @@ export class LineChart extends LitElement {
         {
           type: 'candlestick',
           name: 'Candle',
-          id: 'candle',
+          id: 'candlestick',
           data: !this.isLineChart() ? this.trendCandleData : [],
           tooltip: {
             enabled: false,
