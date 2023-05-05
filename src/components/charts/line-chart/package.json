@@ -1,0 +1,19 @@
+{
+  "name": "@demo/my-line-chart",
+  "version": "1.0.1",
+  "description": "Line && candlestick charts for analyzing currency price",
+  "main": "my-line-chart.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "publish:prerelease": "npm version prerelease --preid=test && npm publish --tag test --no-shrinkwrap --no-optional",
+    "publish:patch": "npm version patch && npm publish --no-shrinkwrap --no-optional",
+    "publish:minor": "npm version minor && npm publish --no-shrinkwrap --no-optional"
+  },
+  "keywords": [
+    "line chart",
+    "candle chart"
+  ],
+  "author": "Julia Matvi",
+  "license": "ISC"
+}

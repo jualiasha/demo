@@ -22,7 +22,8 @@
     "@shoelace-style/shoelace": "^2.0.0",
     "date-fns": "^2.29.3",
     "highcharts": "^10.3.3",
-    "lit": "^2.6.1"
+    "lit": "^2.6.1",
+    "wretch": "^2.5.2"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.16.4",
@@ -32,8 +33,11 @@
     "@open-wc/testing": "^3.1.6",
     "@rollup/plugin-babel": "^5.3.0",
     "@rollup/plugin-node-resolve": "^13.0.6",
+    "@rollup/plugin-replace": "^5.0.2",
+    "@rollup/pluginutils": "^5.0.2",
     "@storybook/testing-library": "^0.0.13",
-    "@web/dev-server": "^0.1.35",
+    "@web/dev-server": "^0.1.37",
+    "@web/dev-server-rollup": "^0.4.0",
     "@web/dev-server-storybook": "^0.5.4",
     "@web/rollup-plugin-html": "^1.11.0",
     "@web/rollup-plugin-import-meta-assets": "^1.0.7",
@@ -54,7 +58,19 @@
     "extends": [
       "@open-wc",
       "prettier"
-    ]
+    ],
+    "rules": {
+      "import/no-extraneous-dependencies": [
+        "off",
+        {
+          "devDependencies": false,
+          "optionalDependencies": false,
+          "peerDependencies": false
+        }
+      ],
+      "class-methods-use-this": "off",
+      "import/no-relative-packages": "off"
+    }
   },
   "prettier": {
     "singleQuote": true,
