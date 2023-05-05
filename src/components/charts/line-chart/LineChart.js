@@ -3,8 +3,6 @@ import Highcharts from 'highcharts/es-modules/masters/highstock.src.js';
 import 'highcharts/es-modules/masters/modules/pattern-fill.src.js';
 import 'highcharts/es-modules/masters/modules/accessibility.src.js';
 import { format } from 'date-fns';
-// import { fetchChartData } from '../../services/chartService.js';
-import response from '../../services/fetchedData.json' assert { type: 'json' };
 
 const lineChartColors = {
   selectedArea: 'rgba(51,92,173,0.25)',
@@ -13,8 +11,6 @@ const lineChartColors = {
   selectedTime: '#e51212',
   darkThemeBackgroundColor: '#313131',
   darkModeTrendLine: '#dedcdc',
-  bullCandle: '#22C55E',
-  bearCandle: '#EF4444',
 };
 
 export class LineChart extends LitElement {
@@ -32,49 +28,8 @@ export class LineChart extends LitElement {
     this.selectedArea = null;
     this.trendData = null;
     this.trendCandleData = null;
-    this.fetchId = 1;
     this.darkMode = false;
     this.chartType = 'line';
-  }
-
-  /* eslint class-methods-use-this: "off" */
-
-  async connectedCallback() {
-    super.connectedCallback();
-    const fetchedData = await this._fetchData();
-    const trendData = [];
-    const trendCandleData = [];
-    fetchedData.forEach(res => {
-      const x = res.t;
-      const close = Number(res.c);
-      trendData.push({
-        x,
-        y: close,
-      });
-      trendCandleData.push({
-        x,
-        open: Number(res.o),
-        close,
-        high: Number(res.h),
-        low: Number(res.l),
-        color:
-          res.o - res.c > 0
-            ? lineChartColors.bullCandle
-            : lineChartColors.bearCandle,
-      });
-    });
-    this.trendData = trendData;
-    this.trendCandleData = trendCandleData;
-  }
-
-  async _fetchData() {
-    // let response = null;
-    // try {
-    //   response = await fetchChartData(this.fetchId);
-    // } catch (error) {
-    //   console.log('fetchDataError:', error);
-    // }
-    return Object.values(response.response);
   }
 
   shouldUpdateChartData(_changedProperties) {
@@ -86,7 +41,6 @@ export class LineChart extends LitElement {
   }
 
   willUpdate(_changedProperties) {
-    console.log(_changedProperties, this.selectedArea);
     if (this._chart) {
       if (this.shouldUpdateChartData(_changedProperties)) {
         this.updateChartData();
@@ -163,7 +117,6 @@ export class LineChart extends LitElement {
   }
 
   updateChartXAxis(selectedTime) {
-    console.log(selectedTime);
     const xUtc = this._getTimezoneTime(selectedTime, 'UTC');
     this._chart.update({
       xAxis: {
@@ -212,7 +165,6 @@ export class LineChart extends LitElement {
   }
 
   initChart() {
-    console.log(this.trendData);
     const range30min = 60000 * 30;
     const self = this;
     const figure = this.renderRoot.querySelector('figure');
@@ -414,9 +366,7 @@ export class LineChart extends LitElement {
 
   static styles = css`
     figure {
-      margin: 0;
+      margin: var(--chart-margin, 0);
     }
   `;
 }
-
-customElements.define('my-line-chart', LineChart);

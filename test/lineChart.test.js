@@ -1,9 +1,35 @@
 import { html } from 'lit';
 import { fixture, expect } from '@open-wc/testing';
-import '../src/components/charts/LineChart.js';
+import response from './fetchedData.json' assert { type: 'json' };
+import '../src/components/charts/line-chart/my-line-chart.js';
+
+const fetchedData = Object.values(response.response);
+const trendData = [];
+const trendCandleData = [];
+fetchedData.forEach(res => {
+  const x = res.t;
+  const close = Number(res.c);
+  trendData.push({
+    x,
+    y: close,
+  });
+  trendCandleData.push({
+    x,
+    open: Number(res.o),
+    close,
+    high: Number(res.h),
+    low: Number(res.l),
+    color: res.o - res.c > 0 ? '#22C55E' : '#EF4444',
+  });
+});
 
 describe('LineChart', () => {
-  const chart = html` <my-line-chart></my-line-chart> `;
+  const chart = html`
+    <my-line-chart
+      .trendData=${trendData}
+      .trendCandleData=${trendCandleData}
+    ></my-line-chart>
+  `;
   it('has main props to build chart', async () => {
     const el = await fixture(chart);
     expect(el.trendData.length).to.be.above(0);

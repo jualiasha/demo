@@ -1,5 +1,39 @@
 import { html } from 'lit';
-import '../src/components/charts/LineChart.js';
+import '../src/components/charts/line-chart/my-line-chart.js';
+import { fetchChartData } from '../src/services/chartService.js';
+
+const _fetch = async id => {
+  let response = null;
+  try {
+    response = await fetchChartData(id);
+  } catch (error) {
+    console.log('fetchDataError:', error);
+  }
+  console.log(response);
+  return Object.values(response.response);
+};
+
+const trendData = [];
+const trendCandleData = [];
+const fetchData = async id => {
+  const fetchedData = await _fetch(id);
+  fetchedData.forEach(res => {
+    const x = res.t;
+    const close = Number(res.c);
+    trendData.push({
+      x,
+      y: close,
+    });
+    trendCandleData.push({
+      x,
+      open: Number(res.o),
+      close,
+      high: Number(res.h),
+      low: Number(res.l),
+      color: res.o - res.c > 0 ? '#22C55E' : '#EF4444',
+    });
+  });
+};
 
 const getStyles = args =>
   html`
@@ -40,14 +74,14 @@ const onGraphClick = pointY => {
     graphClick.innerHTML = '';
   }
 };
-const getLineChart = args =>
-  html` <my-line-chart
-    .fetchId=${args.fetchId}
-    .darkMode=${args.darkMode}
-    .chartType=${args.chartType}
-    @graph-click=${e => onGraphClick(e.detail.pointY)}
-    @point-click=${e => onPointClick(e.detail.pointX, e.detail.pointY)}
-  ></my-line-chart>`;
+const getLineChart = args => html` <my-line-chart
+  .darkMode=${args.darkMode}
+  .chartType=${args.chartType}
+  .trendData=${trendData}
+  .trendCandleData=${trendCandleData}
+  @graph-click=${e => onGraphClick(e.detail.pointY)}
+  @point-click=${e => onPointClick(e.detail.pointX, e.detail.pointY)}
+></my-line-chart>`;
 
 const disabled = {
   table: {
@@ -97,6 +131,11 @@ Default.args = {
   darkMode: false,
   chartType: 'line',
 };
+Default.loaders = [
+  async () => ({
+    todo: await fetchData(Default.args.fetchId),
+  }),
+];
 
 export const CandleSticks = Template.bind({});
 CandleSticks.args = {
