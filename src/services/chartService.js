@@ -1,7 +1,4 @@
 import wretch from 'wretch';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
 
 export const fetchChartData = async id => {
   const accessKey = process.env.FC_API_KEY;

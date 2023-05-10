@@ -21,7 +21,6 @@
   "dependencies": {
     "@shoelace-style/shoelace": "^2.0.0",
     "date-fns": "^2.29.3",
-    "dotenv": "^16.0.3",
     "highcharts": "^10.3.3",
     "lit": "^2.6.1",
     "wretch": "^2.5.2"
