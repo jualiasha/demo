@@ -28,7 +28,7 @@ export default /** @type {import('@web/dev-server').DevServerConfig} */ ({
       // setting "include" is important for performance
       include: ['src/services/chartService.js'],
       'process.env.FC_API_KEY': '"fU8WVLH7jLjzdpNGZwxRzQRYK"',
-      'process.env.STORYBOOK_FC_API_KEY': '"fU8WVLH7jLjzdpNGZwxRzQRYK"',
+      'process.env.STORYBOOK_DATA_KEY': '"fU8WVLH7jLjzdpNGZwxRzQRYK"',
       preventAssignment: true,
     }),
   ],
